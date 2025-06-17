@@ -14,20 +14,20 @@ class ProblemCategoryMigration extends Seeder
     {
         ProblemCategory::insert([
             [
-                'unit_id' => 1,
-                'name' => 'Problem One at Sales Department',
+                'unit_id' => 3,
+                'name' => 'Kebersihan',
             ],
             [
                 'unit_id' => 1,
-                'name' => 'Problem Two at Sales Department',
+                'name' => 'Sistem Down',
             ],
             [
                 'unit_id' => 2,
-                'name' => 'Problem One at Technical Support',
+                'name' => 'Obat abis',
             ],
             [
-                'unit_id' => 3,
-                'name' => 'Problem One at Billing Support',
+                'unit_id' => 7,
+                'name' => 'Gudang rusak',
             ],
         ]);
     }
