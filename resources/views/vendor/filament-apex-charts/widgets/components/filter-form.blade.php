@@ -6,7 +6,7 @@
 
     <div x-show="dropdownOpen" x-cloak @class([
         'absolute right-0 mt-2 divide-y divide-gray-100 rounded-lg bg-white shadow-lg ring-1 ring-black/5 transition z-10',
-        'dark:divide-gray-700 dark:bg-gray-800 dark:ring-white/10' => config(
+        'dark:divide-gray-700' => config(
             'filament.dark_mode'),
     ])
         style="{{ match ($width) {
