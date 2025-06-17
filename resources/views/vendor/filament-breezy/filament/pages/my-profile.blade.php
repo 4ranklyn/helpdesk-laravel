@@ -31,7 +31,7 @@
 
             <x-filament::card>
                 @if($plain_text_token)
-                    <input type="text" disabled @class(['w-full py-1 px-3 rounded-lg bg-gray-100 border-gray-200',' dark:bg-gray-900 dark:border-gray-700'=>config('filament.dark_mode')]) name="plain_text_token" value="{{$plain_text_token}}" />
+                    <input type="text" disabled @class(['w-full py-1 px-3 rounded-lg bg-gray-100 border-gray-200',''=>config('filament.dark_mode')]) name="plain_text_token" value="{{$plain_text_token}}" />
                 @endif
 
                 {{$this->createApiTokenForm}}
