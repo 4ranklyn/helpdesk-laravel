@@ -71,6 +71,8 @@ class User extends Authenticatable implements FilamentUser
         'remember_token',
         'identity',
         'phone',
+        'telegram_username',
+        'telegram_user_id',
         'user_level_id',
         'is_active',
     ];

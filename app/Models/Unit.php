@@ -28,6 +28,7 @@ class Unit extends Model
 
     protected $fillable = [
         'name',
+        'telegram_group_id',
     ];
 
     /**
