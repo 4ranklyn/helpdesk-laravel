@@ -3,47 +3,54 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class TelegramService
 {
-    protected $botToken;
-    protected $apiUrl;
+    protected $token;
+    protected $baseUrl;
 
     public function __construct()
     {
-        $this->botToken = config('telegram.bot_token');
-        $this->apiUrl = 'https://api.telegram.org/bot' . $this->botToken;
+        $this->token = config('services.telegram-bot-api.token');
+        $this->baseUrl = "https://api.telegram.org/bot{$this->token}";
     }
 
     /**
-     * Send a message to a specific chat ID.
+     * Send a message to a given Telegram chat ID.
      *
-     * @param int $chatId The ID of the group (negative) or user (positive).
-     * @param string $text The message text.
-     * @param string|null $parseMode 'MarkdownV2' or 'HTML'.
-     * @return \Illuminate\Http\Client\Response
+     * @param int|string $chatId
+     * @param string $message
+     * @return bool
      */
-    public function sendMessage(int $chatId, string $text, ?string $parseMode = 'MarkdownV2')
+    public function sendMessage($chatId, $message)
     {
-        return Http::post($this->apiUrl . '/sendMessage', [
-            'chat_id' => $chatId,
-            'text' => $text,
-            'parse_mode' => $parseMode,
-        ]);
-    }
-
-    /**
-     * Escape special characters for MarkdownV2.
-     *
-     * @param string $text
-     * @return string
-     */
-    public static function escapeMarkdown(string $text): string
-    {
-        $charactersToEscape = ['_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!'];
-        foreach ($charactersToEscape as $char) {
-            $text = str_replace($char, '\\' . $char, $text);
+        if (!$this->token) {
+            Log::error('Telegram Bot Token is not configured.');
+            return false;
         }
-        return $text;
+
+        try {
+            $response = Http::post("{$this->baseUrl}/sendMessage", [
+                'chat_id' => $chatId,
+                'text' => $message,
+                'parse_mode' => 'Markdown', // Optional: for rich text formatting
+            ]);
+
+            if ($response->failed()) {
+                Log::error('Failed to send Telegram message.', [
+                    'status' => $response->status(),
+                    'response' => $response->json()
+                ]);
+                return false;
+            }
+
+            return true;
+        } catch (\Exception $e) {
+            Log::error('Exception while sending Telegram message.', [
+                'error' => $e->getMessage()
+            ]);
+            return false;
+        }
     }
 }
