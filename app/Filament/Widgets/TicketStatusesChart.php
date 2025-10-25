@@ -30,17 +30,34 @@ class TicketStatusesChart extends ApexChartWidget
     protected function getOptions(): array
     {
         $ticketStatuses = TicketStatus::select('id', 'name')->withCount(['tickets'])->get();
+        
         return [
             'chart' => [
                 'type' => 'pie',
-                'height' => 300,
+                'height' => 350,
             ],
             'series' => $ticketStatuses->pluck('tickets_count')->toArray(),
             'labels' => $ticketStatuses->pluck('name')->toArray(),
             'legend' => [
                 'labels' => [
-                    'colors' => '#9ca3af',
-                    'fontWeight' => 600,
+                    'colors' => '#4B5563',
+                    'fontWeight' => 500,
+                ],
+                'position' => 'bottom',
+            ],
+            'plotOptions' => [
+                'pie' => [
+                    'donut' => [
+                        'size' => '60%',
+                    ],
+                ],
+            ],
+            'title' => [
+                'text' => 'Distribusi Status Tiket',
+                'align' => 'center',
+                'style' => [
+                    'fontSize' => '16px',
+                    'fontWeight' => 'bold',
                 ],
             ],
         ];
