@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Events\TicketCreated;
+use App\Listeners\SendNewTicketNotification;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -18,8 +20,8 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
-        \App\Events\TicketCreated::class => [
-            \App\Listeners\SendTelegramNotification::class,
+        TicketCreated::class => [
+            SendNewTicketNotification::class,
         ],
     ];
 
