@@ -136,6 +136,7 @@ return [
         'namespace' => 'App\\Filament\\Widgets',
         'path' => app_path('Filament/Widgets'),
         'register' => [
+            // Only keep the account widget and Overlook
             Widgets\AccountWidget::class,
             \Awcodes\Overlook\Overlook::class,
         ],

@@ -5,9 +5,9 @@ namespace App\Filament\Widgets;
 use App\Models\Unit;
 use Filament\Widgets\BarChartWidget;
 
-class UnitTicketProgressChart extends BarChartWidget
+class UnitTicketProgressBarChart extends BarChartWidget
 {
-    protected static ?string $heading = 'Progress Tiket per Unit';
+    protected static ?string $heading = 'Ticket Progress by Unit (Bar Chart)';
     protected static ?int $sort = 1;
     protected int | string | array $columnSpan = 'full';
     protected static ?string $maxHeight = '350px';

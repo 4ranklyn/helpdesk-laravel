@@ -5,7 +5,7 @@ namespace App\Filament\Widgets;
 use App\Models\TicketStatus;
 use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 
-class TicketStatusesChart extends ApexChartWidget
+class TicketStatusPieChart extends ApexChartWidget
 {
     /**
      * Chart Id
@@ -19,7 +19,7 @@ class TicketStatusesChart extends ApexChartWidget
      *
      * @var string|null
      */
-    protected static ?string $heading = 'Ticket Statuses';
+    protected static ?string $heading = 'Ticket Status Distribution (Pie Chart)';
 
     /**
      * Chart options (series, labels, types, size, animations...)

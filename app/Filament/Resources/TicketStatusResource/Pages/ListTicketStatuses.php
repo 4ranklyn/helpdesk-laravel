@@ -3,8 +3,8 @@
 namespace App\Filament\Resources\TicketStatusResource\Pages;
 
 use App\Filament\Resources\TicketStatusResource;
-use App\Filament\Widgets\TicketStatusesChart;
-use App\Filament\Widgets\UnitTicketProgressChart;
+use App\Filament\Widgets\TicketStatusPieChart;
+use App\Filament\Widgets\UnitTicketProgressBarChart;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\ListRecords;
 
@@ -24,10 +24,9 @@ class ListTicketStatuses extends ListRecords
         $widgets = [];
 
         if (auth()->user()->hasRole('Super Admin')) {
-            $widgets[] = UnitTicketProgressChart::class;
+            $widgets[] = UnitTicketProgressBarChart::class;
+            $widgets[] = TicketStatusPieChart::class;
         }
-
-        $widgets[] = TicketStatusesChart::class;
 
         return $widgets;
     }
