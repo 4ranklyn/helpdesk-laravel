@@ -14,14 +14,14 @@ return new class extends Migration {
     {
         Schema::create('tickets', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('priority_id')->index('priority_id');
-            $table->unsignedBigInteger('unit_id')->index('unit_id');
-            $table->unsignedBigInteger('owner_id')->index('owner_id');
-            $table->unsignedBigInteger('problem_category_id')->index('problem_category_id');
+            $table->unsignedBigInteger('priority_id')->index('tickets_priority_id_index');
+            $table->unsignedBigInteger('unit_id')->index('tickets_unit_id_index');
+            $table->unsignedBigInteger('owner_id')->index('tickets_owner_id_index');
+            $table->unsignedBigInteger('problem_category_id')->index('tickets_problem_category_id_index');
             $table->string('title');
             $table->text('description');
-            $table->unsignedBigInteger('ticket_statuses_id')->index('ticket_statuses_id');
-            $table->unsignedBigInteger('responsible_id')->nullable()->index('responsible_id');
+            $table->unsignedBigInteger('ticket_statuses_id')->index('tickets_ticket_statuses_id_index');
+            $table->unsignedBigInteger('responsible_id')->nullable()->index('tickets_responsible_id_index');
             $table->timestamps();
             $table->timestamp('approved_at')->nullable();
             $table->timestamp('solved_at')->nullable();

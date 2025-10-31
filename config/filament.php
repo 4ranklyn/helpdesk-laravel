@@ -138,7 +138,7 @@ return [
         'register' => [
             // Only keep the account widget and Overlook
             Widgets\AccountWidget::class,
-            \Awcodes\Overlook\Overlook::class,
+            // \Awcodes\Overlook\Overlook::class,
         ],
     ],
 

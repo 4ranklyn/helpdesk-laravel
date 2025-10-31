@@ -7,8 +7,11 @@ use App\Services\TelegramService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
-class SendNewTicketNotification
+
+class SendNewTicketNotification implements ShouldQueue
 {
+    use InteractsWithQueue;
+    
     protected $telegramService;
 
     /**

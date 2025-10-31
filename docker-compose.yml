@@ -1,0 +1,53 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: laravel_app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+    ports:
+      - "5173:5173" # Port untuk Vite (npm run dev)
+    networks:
+      - laravelnet
+
+  # Layanan Nginx (Web Server)
+  app_server:
+    image: nginx:alpine
+    container_name: laravel_server
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ./:/var/www
+      - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
+    networks:
+      - laravelnet
+
+  # Layanan Database (Opsional)
+  db:
+    image: mysql:8.0
+    container_name: laravel_db
+    command: --skip-name-resolve
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-laravel}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-root}
+    volumes:
+      - dbdata:/var/lib/mysql
+    ports:
+      - "3307:3306"
+    networks:
+      - laravelnet
+
+  # LAYANAN ZROK TUNNEL
+ 
+networks:
+  laravelnet:
+    driver: bridge
+
+volumes:
+  dbdata:
+    driver: local

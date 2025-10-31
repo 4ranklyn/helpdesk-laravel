@@ -1,0 +1,21 @@
+# Abaikan file symlink yang bermasalah
+public/storage
+
+# Abaikan dependensi yang harus diinstal DI DALAM kontainer
+vendor/
+node_modules/
+
+# Abaikan file sistem operasi dan Git
+.git
+.gitignore
+.gitattributes
+
+# Abaikan file .env (ini sensitif dan tidak boleh ada di dalam image)
+.env
+
+# Abaikan log dan cache host
+storage/logs
+storage/framework/cache
+storage/framework/sessions
+storage/framework/views
+docker/dbdata/
