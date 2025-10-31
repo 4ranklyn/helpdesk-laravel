@@ -31,6 +31,19 @@ class TicketResource extends Resource
 
     public static function form(Form $form): Form
     {
+        $user = auth()->user();
+        $isStaffUnit = $user->hasRole('Staff Unit');
+        $isAdminUnit = $user->hasRole('Admin Unit');
+        
+        // Default to not restricted (for create)
+        $isRestrictedUser = false;
+        
+        // Check if we're in edit mode by looking at the current route
+        $route = request()->route();
+        if ($route && in_array($route->getAction('as'), ['filament.resources.tickets.edit', 'filament.resources.tickets.view'])) {
+            $isRestrictedUser = $isStaffUnit || $isAdminUnit;
+        }
+        
         return $form
             ->schema([
                 Card::make()->schema([
@@ -40,7 +53,10 @@ class TicketResource extends Resource
                             ->pluck('name', 'id'))
                         ->searchable()
                         ->required()
-                        ->afterStateUpdated(function ($state, callable $get, callable $set) {
+                        ->disabled($isRestrictedUser)
+                        ->afterStateUpdated(function ($state, callable $get, callable $set) use ($isRestrictedUser) {
+                            if ($isRestrictedUser) return;
+                            
                             $unit = Unit::find($state);
                             if ($unit) {
                                 $problemCategoryId = (int) $get('problem_category_id');
@@ -55,7 +71,9 @@ class TicketResource extends Resource
 
                     Forms\Components\Select::make('problem_category_id')
                         ->label(__('Problem Category'))
-                        ->options(function (callable $get, callable $set) {
+                        ->options(function (callable $get, callable $set) use ($isRestrictedUser) {
+                            if ($isRestrictedUser) return [];
+                            
                             $unit = Unit::find($get('unit_id'));
                             if ($unit) {
                                 return $unit->problemCategories->pluck('name', 'id');
@@ -64,12 +82,14 @@ class TicketResource extends Resource
                             return ProblemCategory::all()->pluck('name', 'id');
                         })
                         ->searchable()
-                        ->required(),
+                        ->required()
+                        ->disabled($isRestrictedUser),
 
                     Forms\Components\TextInput::make('title')
                         ->label(__('Title'))
                         ->required()
                         ->maxLength(255)
+                        ->disabled($isRestrictedUser)
                         ->columnSpan([
                             'sm' => 2,
                         ]),
@@ -78,6 +98,7 @@ class TicketResource extends Resource
                         ->label(__('Description'))
                         ->required()
                         ->maxLength(65535)
+                        ->disabled($isRestrictedUser)
                         ->columnSpan([
                             'sm' => 2,
                         ]),
@@ -105,7 +126,8 @@ class TicketResource extends Resource
                         ->options(Priority::all()
                             ->pluck('name', 'id'))
                         ->searchable()
-                        ->required(),
+                        ->required()
+                        ->disabled($isStaffUnit && $isRestrictedUser), // Only Staff Unit can't edit priority when editing
 
                     Forms\Components\Select::make('ticket_statuses_id')
                         ->label(__('Status'))
@@ -131,7 +153,8 @@ class TicketResource extends Resource
                             fn () => !auth()
                                 ->user()
                                 ->hasAnyRole(['Super Admin', 'Admin Unit']),
-                        ),
+                        )
+                        ->disabled($isStaffUnit), // Only Staff Unit can't edit responsible
 
                     Forms\Components\Placeholder::make('created_at')
                         ->translateLabel()

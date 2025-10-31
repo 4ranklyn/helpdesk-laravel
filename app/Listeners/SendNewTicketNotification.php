@@ -30,14 +30,14 @@ class SendNewTicketNotification
      */
     public function handle(TicketCreated $event)
     {
-        $ticket = $event->ticket->load(['unit', 'user']); // Eager load relationships
+        $ticket = $event->ticket->load(['unit', 'owner']); // Eager load relationships
 
         if ($ticket->unit && $ticket->unit->telegram_group_id) {
             $message = "📢 *Laporan Tiket Baru*\n\n";
             $message .= "*ID Tiket:* `{$ticket->id}`\n";
             $message .= "*Unit:* {$ticket->unit->name}\n";
             $message .= "*Judul:* {$ticket->title}\n";
-            $message .= "*Pelapor:* {$ticket->user->name}\n\n";
+            $message .= "*Pelapor:* {$ticket->owner->name}\n\n";
             $message .= "Mohon untuk segera ditindaklanjuti.";
 
             $this->telegramService->sendMessage($ticket->unit->telegram_group_id, $message);

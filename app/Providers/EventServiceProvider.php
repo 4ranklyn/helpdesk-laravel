@@ -30,7 +30,7 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        \App\Models\Ticket::observe(\App\Observers\TicketObserver::class);
     }
 
     /**
