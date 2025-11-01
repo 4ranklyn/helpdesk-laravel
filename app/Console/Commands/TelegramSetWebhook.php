@@ -20,6 +20,12 @@ class TelegramSetWebhook extends Command
             return 1;
         }
 
+        if ($webhookUrl === 'YOUR-TELEGRAM-WEBHOOK-URL') {
+            $this->error('TELEGRAM_WEBHOOK_URL is set to the default placeholder value.');
+            $this->info('Please update it in your .env file with a valid public URL (e.g., from ngrok).');
+            return 1;
+        }
+
         $response = $telegramService->setWebhook($webhookUrl);
 
         if ($response['ok']) {
