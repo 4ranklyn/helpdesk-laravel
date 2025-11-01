@@ -21,7 +21,7 @@ class EventServiceProvider extends ServiceProvider
             SendEmailVerificationNotification::class,
         ],
         TicketCreated::class => [
-            SendNewTicketNotification::class,
+            \App\Listeners\SendTelegramNotification::class
         ],
     ];
 

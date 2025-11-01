@@ -8,8 +8,9 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Log; // Tambahkan ini
 
-class SendTelegramNotification
+class SendTelegramNotification implements ShouldQueue
 {
+    use InteractsWithQueue;
     protected $telegramService;
 
     public function __construct(TelegramService $telegramService)
