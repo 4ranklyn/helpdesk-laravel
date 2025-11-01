@@ -4,13 +4,12 @@ namespace App\Listeners;
 
 use App\Events\TicketCreated;
 use App\Services\TelegramService;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
+
 use Illuminate\Support\Facades\Log; // Tambahkan ini
 
-class SendTelegramNotification implements ShouldQueue
+class SendTelegramNotification 
 {
-    use InteractsWithQueue;
+
     protected $telegramService;
 
     public function __construct(TelegramService $telegramService)
