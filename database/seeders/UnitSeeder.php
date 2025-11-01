@@ -13,7 +13,7 @@ class UnitSeeder extends Seeder
     public function run(): void
     {
         Unit::insert([
-            ['name' => 'IT'],
+            ['name' => 'IT','telegram_group_id' => '-4890970835'],
             ['name' => 'Farmasi'],
             ['name' => 'K3'],
             ['name' => 'ISPRS'],
