@@ -1,50 +1,74 @@
-# Telegram Integration Setup Guide
+# Integrasi Telegram dengan Helpdesk Laravel (Lokal)
 
-This document provides a step-by-step guide to setting up the Telegram integration for receiving notifications about new tickets.
+Dokumen ini menjelaskan cara mengkonfigurasi integrasi Telegram untuk mengirim notifikasi dari aplikasi Helpdesk Laravel yang berjalan di lingkungan pengembangan lokal menggunakan `ngrok` sebagai tunnel.
 
-## 1. Create a Telegram Bot
+## Prasyarat
 
-1.  Open Telegram and search for the `@BotFather` bot.
-2.  Start a chat with BotFather and use the `/newbot` command to create a new bot.
-3.  Follow the instructions to choose a name and username for your bot.
-4.  BotFather will provide you with a unique bot token. Copy this token and keep it safe.
+1.  **Akun Telegram & Bot:** Anda harus memiliki bot Telegram dan token botnya. Jika belum, buat bot baru dengan berbicara kepada [@BotFather](https://t.me/BotFather) di Telegram.
+2.  **Ngrok:** Pastikan `ngrok` sudah terinstal di sistem Anda. Anda bisa mengunduhnya dari [ngrok.com](https://ngrok.com/download).
+3.  **ID Grup Telegram:** Anda memerlukan ID grup target tempat notifikasi akan dikirim. Anda bisa mendapatkan ID ini dengan menambahkan bot ke grup dan menggunakan bot seperti `@RawDataBot` untuk melihat ID grup (biasanya angka negatif).
 
-## 2. Configure the Laravel Application
+## Langkah-langkah Konfigurasi
 
-1.  Open the `.env` file in the root of your Laravel project.
-2.  Add the following line to the end of the file, replacing `YOUR_BOT_TOKEN` with the token you received from BotFather:
+### 1. Konfigurasi File `.env`
 
+Salin file `.env.example` menjadi `.env` jika Anda belum memilikinya:
+
+```bash
+cp .env.example .env
+```
+
+Buka file `.env` dan isi variabel berikut:
+
+-   `TELEGRAM_BOT_TOKEN`: Isi dengan token bot yang Anda dapatkan dari BotFather.
+    -   Contoh untuk bot Anda: `TELEGRAM_BOT_TOKEN=`
+-   `TELEGRAM_WEBHOOK_URL`: Ini akan menjadi URL publik yang dibuat oleh `ngrok`. Biarkan kosong untuk saat ini.
+
+### 2. Jalankan Server Lokal dan Ngrok
+
+1.  Buka terminal dan jalankan server pengembangan Laravel:
+
+    ```bash
+    php artisan serve
     ```
-    TELEGRAM_BOT_TOKEN=YOUR_BOT_TOKEN
+
+    Secara default, server akan berjalan di `http://127.0.0.1:8000`.
+
+2.  Buka terminal **lain** dan jalankan `ngrok` untuk membuat tunnel ke server lokal Anda:
+
+    ```bash
+    ngrok http 8000
     ```
 
-## 3. Set Up the Webhook
+3.  `ngrok` akan memberikan Anda URL publik. Untuk kasus Anda, URL-nya adalah `https://experienceable-briggs-unreasoning.ngrok-free.dev`. Salin URL **HTTPS** ini.
 
-1.  The application uses a webhook to receive updates from Telegram. The webhook URL is `https://your-domain.com/api/telegram/webhook`.
-2.  You need to register this URL with Telegram by sending a request to the following URL, replacing `YOUR_BOT_TOKEN` and `YOUR_WEBHOOK_URL` with your actual bot token and webhook URL:
+### 3. Atur Webhook URL
 
-    ```
-    https://api.telegram.org/bot<YOUR_BOT_TOKEN>/setWebhook?url=<YOUR_WEBHOOK_URL>
-    ```
+1.  Kembali ke file `.env` Anda dan tempelkan URL `ngrok` yang telah Anda salin ke variabel `TELEGRAM_WEBHOOK_URL`.
 
-    For example:
-
-    ```
-    https://api.telegram.org/bot123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11/setWebhook?url=https://sistemkmm.rs.uns.ac.id/api/telegram/webhook
+    ```env
+    TELEGRAM_WEBHOOK_URL=https://experienceable-briggs-unreasoning.ngrok-free.dev/telegram/webhook
     ```
 
-3.  You can do this by pasting the URL into your browser or using a tool like cURL.
+    **Penting:** Pastikan untuk menambahkan `/telegram/webhook` di akhir URL `ngrok` Anda. Ini adalah endpoint yang akan mendengarkan pembaruan dari Telegram.
 
-## 4. Add the Bot to Your Groups
+2.  Jalankan perintah `artisan` untuk mendaftarkan URL webhook ini ke Telegram:
 
-1.  Add the bot to the Telegram groups that correspond to the units in your application.
-2.  Make sure that the group names in Telegram exactly match the unit names in the application. For example, if you have a unit named "IT Support", the Telegram group should also be named "IT Support".
-3.  The bot will automatically detect when it has been added to a group and will save the group's `chat_id` to the corresponding unit in the database.
+    ```bash
+    php artisan telegram:set-webhook
+    ```
 
-## 5. User Registration
+    Jika berhasil, Anda akan melihat pesan sukses.
 
-1.  Users need to add their Telegram username and user ID to their profile in the web application.
-2.  The application will use this information to mention the correct user when a new ticket is assigned to them.
-3.  Users can get their user ID by sending the `/start` command to the `@userinfobot` bot on Telegram.
+### 4. Konfigurasi Notifikasi
 
-Once these steps are completed, the integration is ready. When a new ticket is created, a notification will be sent to the corresponding Telegram group, and the responsible user will be mentioned in the message.
+Pastikan `Unit` yang relevan di database Anda memiliki `telegram_group_id` yang benar. Untuk grup Anda, ID-nya adalah `-4890970835`. Ini akan memastikan notifikasi dapat dikirim ke grup yang sesuai saat tiket dibuat untuk unit tersebut.
+
+## Bagaimana Cara Kerjanya?
+
+-   **Ngrok:** Meneruskan permintaan dari internet publik ke server lokal Anda.
+-   **Webhook:** Setiap kali ada aktivitas yang relevan (misalnya, pesan ke bot), Telegram akan mengirimkan data ke URL `ngrok` Anda.
+-   **Route (`routes/web.php`):** Rute `/telegram/webhook` menangkap data ini.
+-   **Event & Listener:** Ketika tiket baru dibuat (`TicketCreated` event), `SendTelegramNotification` listener akan terpicu. Listener ini menggunakan `TelegramService` untuk mengirim pesan notifikasi ke ID grup yang terkait dengan unit tiket.
+
+Dengan mengikuti langkah-langkah ini, Anda dapat sepenuhnya menguji alur notifikasi Telegram di lingkungan pengembangan lokal Anda.

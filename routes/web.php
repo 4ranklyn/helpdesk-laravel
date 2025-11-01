@@ -15,6 +15,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/test-units', function () {
+    return response()->json(App\Models\Unit::all());
+});
+
 Route::get('/', function () {
     return view('landing');
 })->name('home');
