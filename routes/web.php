@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\SocialiteController;
+use App\Http\Controllers\TelegramController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Http;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,6 +27,8 @@ Route::get('/', function () {
 
 // Authentication Routes
 require __DIR__.'/auth.php';
+
+Route::post('/telegram/webhook', [TelegramController::class, 'handleWebhook']);
 
 // Socialite login routes
 Route::prefix('auth')->group(function () {

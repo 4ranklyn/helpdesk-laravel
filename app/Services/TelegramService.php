@@ -18,9 +18,10 @@ class TelegramService
 
     public function sendMessage($chatId, $text)
     {
-        return Http::post("https://api.telegram.org/bot{$this->token}/sendMessage", [
+        return Http::post("{$this->baseUrl}/sendMessage", [
             'chat_id' => $chatId,
             'text' => $text,
+            'parse_mode' => 'Markdown', // Tambahkan ini agar format bold (*...*) berfungsi
         ])->json();
     }
 
