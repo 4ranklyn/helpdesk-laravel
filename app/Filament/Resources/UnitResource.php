@@ -29,6 +29,9 @@ class UnitResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
+                Forms\Components\TextInput::make('telegram_group_id')
+                    ->label('Telegram Group ID')
+                    ->maxLength(255),
             ])
         ;
     }
@@ -38,6 +41,8 @@ class UnitResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\TextColumn::make('telegram_group_id')
+                    ->label('Telegram Group ID'),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),

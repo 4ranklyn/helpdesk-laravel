@@ -8,20 +8,23 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Notifications\Notifiable;
 
 /**
  * Class Unit.
  *
  * @property int $id
  * @property string $name
+ * @property int|string|null $telegram_group_id
  * @property Collection|ProblemCategory[] $problem_categories
  * @property Collection|Ticket[] $tickets
  * @property Collection|User[] $users
  */
 class Unit extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, HasFactory, Notifiable;
     public $timestamps = false;
 
     protected $table = 'units';
@@ -59,5 +62,10 @@ class Unit extends Model
     public function users()
     {
         return $this->hasMany(User::class);
+    }
+
+    public function routeNotificationForTelegram($notification){
+
+        return $this->telegram_group_id;
     }
 }

@@ -3,9 +3,8 @@
 namespace App\Filament\Resources\TicketResource\Pages;
 
 use App\Filament\Resources\TicketResource;
+use App\Notifications\telemed;
 use Filament\Resources\Pages\CreateRecord;
-
-use App\Events\TicketCreated;
 
 class CreateTicket extends CreateRecord
 {
@@ -27,6 +26,12 @@ class CreateTicket extends CreateRecord
      */
     protected function afterCreate(): void
     {
-        TicketCreated::dispatch($this->record);
+        $ticket = $this->record;
+        $unit = $ticket->unit;
+
+        // Kirim notifikasi ke unit yang bersangkutan
+        if ($unit && $unit->telegram_group_id) {
+            $unit->notify(new telemed($ticket));
+        }
     }
 }
