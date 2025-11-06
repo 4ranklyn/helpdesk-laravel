@@ -20,7 +20,7 @@
         "laravel/fortify": "^1.21",
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.2",
-        "laravel/telescope": "^5.14",
+        "laravel/telescope": "^5.15",
         "laravel/tinker": "^2.8",
         "leandrocfe/filament-apex-charts": "^2.0",
         "owenvoke/blade-fontawesome": "^2.3",

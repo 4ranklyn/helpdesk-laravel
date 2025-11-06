@@ -16,6 +16,7 @@ use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
+use Filament\Navigation\NavigationItem;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -144,17 +145,37 @@ class TicketResource extends Resource
 
                     Forms\Components\Select::make('responsible_id')
                         ->label(__('Responsible'))
-                        ->options(User::ByRole()
-                            ->pluck('name', 'id'))
+                        ->options(function (callable $get) {
+                            $unitId = $get('unit_id');
+                            $user = auth()->user();
+                            
+                            // If no unit selected or user is Super Admin, show all users
+                            if (!$unitId || $user->hasRole('Super Admin')) {
+                                return User::ByRole()->pluck('name', 'id');
+                            }
+                            
+                            // Show only users from the selected unit
+                            return User::where('unit_id', $unitId)
+                                ->whereHas('roles', function($q) {
+                                    $q->whereIn('name', ['Admin Unit', 'Staff Unit']);
+                                })
+                                ->pluck('name', 'id');
+                        })
                         ->searchable()
-                        ->required()
+                        ->required(fn (callable $get) => $get('unit_id') == auth()->user()->unit_id)
                         ->hiddenOn('create')
                         ->hidden(
                             fn () => !auth()
                                 ->user()
-                                ->hasAnyRole(['Super Admin', 'Admin Unit']),
+                                ->hasAnyRole(['Super Admin', 'Admin Unit'])
                         )
-                        ->disabled($isStaffUnit), // Only Staff Unit can't edit responsible
+                        ->disabled($isStaffUnit) // Only Staff Unit can't edit responsible
+                        ->hint(function (callable $get) {
+                            if ($get('unit_id') != auth()->user()->unit_id) {
+                                return 'Optional when assigned to another unit';
+                            }
+                            return null;
+                        }),
 
                     Forms\Components\Placeholder::make('created_at')
                         ->translateLabel()
@@ -173,6 +194,8 @@ class TicketResource extends Resource
 
     public static function table(Table $table): Table
     {
+        $isSuperAdmin = auth()->user()->hasRole('Super Admin');
+        
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('title')
@@ -190,6 +213,13 @@ class TicketResource extends Resource
                 Tables\Columns\TextColumn::make('ticketStatus.name')
                     ->label(__('Status'))
                     ->sortable(),
+                Tables\Columns\TextColumn::make('responsible.name')
+                    ->label(__('Assigned To'))
+                    ->visible(fn () => $isSuperAdmin || auth()->user()->hasRole('Admin Unit'))
+                    ->formatStateUsing(fn ($state) => $state ?: 'Unassigned')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable($isSuperAdmin),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
@@ -217,10 +247,47 @@ class TicketResource extends Resource
     {
         return [
             'index' => Pages\ListTickets::route('/'),
+            'my-tickets' => Pages\MyTickets::route('/my-tickets'),
+            'assigned-tickets' => Pages\AssignedTickets::route('/assigned-tickets'),
             'create' => Pages\CreateTicket::route('/create'),
             'view' => Pages\ViewTicket::route('/{record}'),
             'edit' => Pages\EditTicket::route('/{record}/edit'),
         ];
+    }
+
+    public static function getNavigationItems(): array
+    {
+        $user = auth()->user();
+        $items = [];
+
+        // Only show All Tickets for Super Admin and Admin Unit
+        if ($user->hasRole('Super Admin') || $user->hasRole('Admin Unit')) {
+            $items[] = NavigationItem::make()
+                ->label('All Tickets')
+                ->icon('heroicon-o-ticket')
+                ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.resources.tickets.index'))
+                ->url(static::getUrl('index'))
+                ->sort(1);
+        }
+
+        // Show My Tickets and Assigned Tickets for Admin Unit and Staff Unit
+        if ($user->hasAnyRole(['Admin Unit', 'Staff Unit'])) {
+            $items[] = NavigationItem::make()
+                ->label('My Tickets')
+                ->icon('heroicon-o-document-text')
+                ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.resources.tickets.my-tickets'))
+                ->url(static::getUrl('my-tickets'))
+                ->sort(2);
+
+            $items[] = NavigationItem::make()
+                ->label('Assigned Tickets')
+                ->icon('heroicon-o-clipboard-list')
+                ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.resources.tickets.assigned-tickets'))
+                ->url(static::getUrl('assigned-tickets'))
+                ->sort(3);
+        }
+
+        return $items;
     }
 
     /**
