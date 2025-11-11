@@ -27,12 +27,14 @@ class TicketStatus extends Model
     public const ON_HOLD = 4;
     public const PENDING_CUSTOMER_RESPONSE = 5;
     public const RESOLVED = 6;
-    public $timestamps = false;
+    
     protected $table = 'ticket_statuses';
-
+    
     protected $fillable = [
         'name',
     ];
+    
+    public $timestamps = false;
 
     /**
      * Get all of the tickets for the TicketStatus.

@@ -32,4 +32,15 @@ class EditTicket extends EditRecord
             $unit->notify(new TicketCompleted($ticket));
         }
     }
+    
+    protected function getRedirectUrl(): string
+    {
+        // Redirect to the ticket view page after update
+        return $this->getResource()::getUrl('view', ['record' => $this->record]);
+    }
+
+    protected function getSavedNotificationMessage(): ?string
+    {
+        return 'Ticket updated successfully';
+    }
 }

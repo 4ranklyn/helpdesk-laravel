@@ -10,6 +10,8 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Rating;
+use App\Models\User;
 
 /**
  * Class Ticket.
@@ -132,5 +134,40 @@ class Ticket extends Model
     public function comments()
     {
         return $this->hasMany(Comment::class, 'tiket_id');
+    }
+
+    /**
+     * Get the rating associated with the ticket.
+     */
+    public function rating()
+    {
+        return $this->hasOne(Rating::class);
+    }
+
+    /**
+     * Check if the ticket can be rated by the given user.
+     */
+    public function canBeRatedBy(User $user): bool
+    {
+        // Check if the user is the ticket creator (owner)
+        $isCreator = $this->owner_id === $user->id;
+        $isCorrectStatus = $this->ticket_statuses_id === TicketStatus::PENDING_CUSTOMER_RESPONSE;
+        $hasNoRating = !$this->rating()->exists();
+        
+        $canRate = $isCreator && $isCorrectStatus && $hasNoRating;
+        
+        \Log::info('Ticket::canBeRatedBy', [
+            'ticket_id' => $this->id,
+            'user_id' => $user->id,
+            'is_creator' => $isCreator ? 'yes' : 'no',
+            'correct_status' => $isCorrectStatus ? 'yes' : 'no',
+            'has_no_rating' => $hasNoRating ? 'yes' : 'no',
+            'can_rate' => $canRate ? 'yes' : 'no',
+            'owner_id' => $this->owner_id,
+            'responsible_id' => $this->responsible_id,
+            'ticket_status_id' => $this->ticket_statuses_id
+        ]);
+        
+        return $canRate;
     }
 }

@@ -36,6 +36,36 @@ Route::prefix('auth')->group(function () {
     Route::get('/{provider}/callback', [SocialiteController::class, 'handleProvideCallback'])->name('auth.provider.callback');
 });
 
+// Route to handle ticket rating submission
+Route::post('/tickets/{ticket}/rate', [\App\Http\Controllers\TicketRatingController::class, 'store'])
+    ->name('tickets.rate')
+    ->middleware(['auth', 'web']);
+
+// Debug route for checking ticket rating status
+Route::get('/debug/ticket/{id}', function($id) {
+    $ticket = \App\Models\Ticket::with(['owner', 'responsible', 'ticketStatus', 'rating'])->findOrFail($id);
+    
+    return response()->json([
+        'ticket_id' => $ticket->id,
+        'title' => $ticket->title,
+        'status' => $ticket->ticketStatus->name,
+        'status_id' => $ticket->ticket_statuses_id,
+        'owner_id' => $ticket->owner_id,
+        'owner_name' => $ticket->owner->name,
+        'responsible_id' => $ticket->responsible_id,
+        'responsible_name' => $ticket->responsible ? $ticket->responsible->name : null,
+        'has_rating' => $ticket->rating ? 'yes' : 'no',
+        'current_user_id' => auth()->id(),
+        'is_owner' => $ticket->owner_id == auth()->id() ? 'yes' : 'no',
+        'can_be_rated' => $ticket->canBeRatedBy(auth()->user()) ? 'yes' : 'no',
+        'can_be_rated_debug' => [
+            'is_owner' => $ticket->owner_id == auth()->id(),
+            'is_pending' => $ticket->ticket_statuses_id == \App\Models\TicketStatus::PENDING_CUSTOMER_RESPONSE,
+            'has_no_rating' => !$ticket->rating()->exists()
+        ]
+    ]);
+})->middleware(['auth', 'web']);
+
 // Protected routes (require authentication)
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', function () {
