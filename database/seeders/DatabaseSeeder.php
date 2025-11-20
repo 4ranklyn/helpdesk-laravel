@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             TicketStatusSeeder::class,
             ProblemCategoryMigration::class,
             TicketSeeder::class,
+            RatingSeeder::class
         ]);
     }
 }
