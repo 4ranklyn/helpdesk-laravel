@@ -32,5 +32,14 @@ class AuthServiceProvider extends ServiceProvider
         Gate::before(function (User $user, string $ability) {
             return $user->isSuperAdmin() ? true : null;
         });
+        
+        Gate::define('viewPerformance', function ($user) {
+            return $user->hasRole(['Manajemen Rumah Sakit', 'Super Admin']);
+        });
+
+        Gate::define('viewUnitPerformance', function($user){
+        // TODO: adjust role name
+        return $user->hasRole('Admin Unit');
+        });
     }
 }

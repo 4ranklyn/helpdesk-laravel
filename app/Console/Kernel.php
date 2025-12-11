@@ -13,6 +13,8 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         // $schedule->command('inspire')->hourly();
+        // recompute daily at 02:00 for current month ranks (updates month-in-progress)
+        $schedule->command('rankings:recompute')->dailyAt('02:00');
     }
 
     /**
