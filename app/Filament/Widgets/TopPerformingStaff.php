@@ -4,29 +4,29 @@ namespace App\Filament\Widgets;
 
 use App\Models\User;
 use Filament\Tables;
-use Filament\Widgets\TableWidget as BaseWidget;
+use Filament\Tables\Table;
+use Filament\Widgets\Widget;
 use Illuminate\Database\Eloquent\Builder;
 
-class TopPerformingStaff extends BaseWidget
+class TopPerformingStaff extends Widget
 {
+    protected static string $view = 'filament.widgets.top-performing-staff';
     protected static ?int $sort = 2;
     protected int | string | array $columnSpan = 'full';
-    protected static ?string $heading = 'Top 5 Teknisi Terbaik';
-
-    // Matikan pagination agar tampilan ringkas (hanya list)
-    protected function isTablePaginationEnabled(): bool
+    
+    protected function getViewData(): array
     {
-        return false;
-    }
-
-    protected function getTableQuery(): Builder
-    {
-        return User::query()
+        $topStaff = User::query()
             ->whereHas('ratingsReceived')
             ->withAvg('ratingsReceived', 'rating')
             ->withCount('responsibleTickets')
             ->orderByDesc('ratings_received_avg_rating')
-            ->take(5); // Hanya ambil 5 orang
+            ->take(5)
+            ->get();
+            
+        return [
+            'topStaff' => $topStaff,
+        ];
     }
 
     protected function getTableColumns(): array

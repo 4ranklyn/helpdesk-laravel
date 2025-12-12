@@ -108,11 +108,11 @@ class User extends Authenticatable implements FilamentUser
     }
 
     /**
-     * Get all of the ticekt responsibility for the User.
+     * Get all of the ticket responsibility for the User.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function ticektResponsibility()
+    public function ticketResponsibility()
     {
         return $this->hasMany(Ticket::class, 'responsible_id');
     }
