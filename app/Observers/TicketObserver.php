@@ -4,6 +4,8 @@ namespace App\Observers;
 
 use App\Models\Ticket;
 use App\Models\TicketStatus;
+use App\Notifications\TicketStatusUpdated;
+use Illuminate\Support\Facades\Log;
 
 class TicketObserver
 {
@@ -24,9 +26,30 @@ class TicketObserver
                 $ticket->solved_at = now();
             }
             
-            // Save the model again if any timestamps were updated
             if ($ticket->isDirty(['approved_at', 'solved_at'])) {
                 $ticket->saveQuietly(); // Use saveQuietly to prevent infinite loop
+            }
+
+            // Check if status requires notification to sender (Owner's Unit)
+            $targetStatuses = [
+                TicketStatus::IN_PROGRESS,
+                TicketStatus::ON_HOLD,
+                TicketStatus::PENDING_CUSTOMER_RESPONSE,
+                TicketStatus::RESOLVED,
+            ];
+
+            if (in_array($ticket->ticket_statuses_id, $targetStatuses)) {
+                $owner = $ticket->owner;
+                $ownerUnit = $owner ? $owner->unit : null;
+
+                if ($ownerUnit && $ownerUnit->telegram_group_id) {
+                    try {
+                        $ownerUnit->notify(new TicketStatusUpdated($ticket));
+                        Log::info("TicketStatusUpdated notification sent to Unit ID: {$ownerUnit->id} for Ticket ID: {$ticket->id}");
+                    } catch (\Exception $e) {
+                        Log::error("Failed to send TicketStatusUpdated notification. Ticket ID: {$ticket->id}. Error: " . $e->getMessage());
+                    }
+                }
             }
         }
     }
