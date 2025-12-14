@@ -7,6 +7,8 @@ namespace App\Providers;
 use App\Models\User;
 use App\Policies\RolePolicy;
 use App\Policies\PermissionPolicy;
+use App\Policies\StaffListPolicy;
+use App\Filament\Pages\StaffList;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Gate;
 use Spatie\Permission\Models\Permission;
@@ -22,6 +24,7 @@ class AuthServiceProvider extends ServiceProvider
     protected $policies = [
         Role::class => RolePolicy::class,
         Permission::class => PermissionPolicy::class,
+        StaffList::class => StaffListPolicy::class,
     ];
 
     /**
@@ -37,9 +40,8 @@ class AuthServiceProvider extends ServiceProvider
             return $user->hasRole(['Manajemen Rumah Sakit', 'Super Admin']);
         });
 
-        Gate::define('viewUnitPerformance', function($user){
-        // TODO: adjust role name
-        return $user->hasRole('Admin Unit');
+        Gate::define('viewUnitPerformance', function($user) {
+            return $user->hasRole('Admin Unit');
         });
     }
 }

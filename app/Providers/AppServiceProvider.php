@@ -8,7 +8,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Artisan;
 use Laravel\Fortify\Contracts\LogoutResponse as LogoutResponseContract;
 use App\Http\Responses\LogoutResponse;
-use App\Services\AHPService;
+use App\Filament\Resources\TicketResource\Pages\MyTickets;
+use App\Filament\Resources\TicketResource\Pages\AssignedTickets;
+use App\Filament\Pages\ViewStaff;
 use Livewire\Livewire;
 use App\Filament\Resources\TicketResource\Pages\Components\RateTicketForm;
 
@@ -31,5 +33,12 @@ class AppServiceProvider extends ServiceProvider
         
         // Register Livewire component
         Livewire::component('rate-ticket-form', RateTicketForm::class);
+
+        // Register the view staff page route
+        $this->app->booted(function () {
+            \Route::get('/admin/view-staff/{record}', ViewStaff::class)
+                ->name('filament.admin.pages.view-staff')
+                ->middleware('web');
+        });
     }
 }
