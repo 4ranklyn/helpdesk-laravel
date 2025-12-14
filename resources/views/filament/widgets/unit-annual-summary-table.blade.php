@@ -4,7 +4,7 @@
         {{-- Added 'mb-6' to create the gap between the header and the table --}}
         <div class="flex items-center justify-between mb-6">
             <h2 class="text-xl font-bold text-gray-800 dark:text-white">
-                Annual Summary Table
+                Tabel Performa Tahunan
             </h2>
 
             <select wire:model="selectedYear" 
@@ -20,9 +20,9 @@
             <table class="w-full text-sm text-left">
                 <thead class="bg-gray-50 dark:bg-white/5">
                     <tr>
-                        <th class="px-4 py-3 font-medium text-gray-950 dark:text-white">Rank</th>
-                        <th class="px-4 py-3 font-medium text-gray-950 dark:text-white">Unit Name</th>
-                        <th class="px-4 py-3 font-medium text-gray-950 dark:text-white text-center">Avg Score</th>
+                        <th class="px-4 py-3 font-medium text-gray-950 dark:text-white">Ranking</th>
+                        <th class="px-4 py-3 font-medium text-gray-950 dark:text-white">Unit</th>
+                        <th class="px-4 py-3 font-medium text-gray-950 dark:text-white text-center">Skor Rata-rata</th>
                         <th class="px-4 py-3 font-medium text-gray-950 dark:text-white text-right">Status</th>
                     </tr>
                 </thead>
@@ -59,7 +59,7 @@
                     @empty
                         <tr>
                             <td colspan="4" class="px-4 py-6 text-center text-gray-500">
-                                No units found for this year.
+                                Belum ada data
                             </td>
                         </tr>
                     @endforelse

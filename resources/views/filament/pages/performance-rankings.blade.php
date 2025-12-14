@@ -2,13 +2,13 @@
     {{-- [NEW] Dynamic Header: Shows the currently selected Month & Year --}}
     <div class="mb-2">
         <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
-            Performance Report: 
+            Laporan Performa: 
             <span class="text-primary-600 dark:text-primary-400">
-                {{ \Carbon\Carbon::createFromDate($selectedYear, $selectedMonth, 1)->format('F Y') }}
+                {{ \Carbon\Carbon::createFromDate($selectedYear, $selectedMonth, 1)->locale('id')->translatedFormat('F Y') }}
             </span>
         </h1>
         <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-            Showing ranking data calculated for this specific period.
+            Hasil kalkulasi ranking performa di periode ini
         </p>
     </div>
 
@@ -19,9 +19,9 @@
             <x-filament::card>
                 <h2 class="text-xl font-bold mb-4 text-gray-800 dark:text-white">
                     @if(auth()->user()->hasRole('Admin Unit'))
-                        My Unit's Staff Rankings
+                        Ranking Staff Unit
                     @else
-                        All Staff Rankings
+                        Ranking Seluruh Staff
                     @endif
                 </h2>
                 
@@ -29,9 +29,9 @@
                     <table class="w-full text-sm text-left">
                         <thead class="bg-gray-50 dark:bg-white/5">
                             <tr>
-                                <th class="px-4 py-3 font-medium text-gray-950 dark:text-white">Rank</th>
-                                <th class="px-4 py-3 font-medium text-gray-950 dark:text-white">Name</th>
-                                <th class="px-4 py-3 font-medium text-gray-950 dark:text-white text-center">Score</th>
+                                <th class="px-4 py-3 font-medium text-gray-950 dark:text-white">Ranking</th>
+                                <th class="px-4 py-3 font-medium text-gray-950 dark:text-white">Nama</th>
+                                <th class="px-4 py-3 font-medium text-gray-950 dark:text-white text-center">Skor</th>
                                 <th class="px-4 py-3 font-medium text-gray-950 dark:text-white text-right">Status</th>
                             </tr>
                         </thead>
@@ -46,7 +46,7 @@
                                             if (auth()->user()->hasRole('Admin Unit')) {
                                                 // Admin Unit: Main Rank is Unit Rank (Loop Iteration)
                                                 $displayRank = $loop->iteration;
-                                                $subText = "Global #{$globalRank}";
+                                                $subText = "#{$globalRank} Umum";
                                             } else {
                                                 // Management: Main Rank is Global Rank
                                                 $displayRank = $globalRank;
@@ -64,11 +64,11 @@
                                             // 3. STATUS LOGIC
                                             $score = (float) $staff['saw_score'];
                                             if ($score >= 0.8) {
-                                                $statusLabel = 'Excellent'; $statusClass = 'bg-green-100 text-green-700';
+                                                $statusLabel = 'Sangat Baik'; $statusClass = 'bg-green-100 text-green-700';
                                             } elseif ($score >= 0.6) {
-                                                $statusLabel = 'Good'; $statusClass = 'bg-orange-100 text-orange-700';
+                                                $statusLabel = 'Baik'; $statusClass = 'bg-orange-100 text-orange-700';
                                             } else {
-                                                $statusLabel = 'Needs Improvement'; $statusClass = 'bg-red-100 text-red-700';
+                                                $statusLabel = 'Perlu Peningkatan'; $statusClass = 'bg-red-100 text-red-700';
                                             }
                                         @endphp
 
@@ -99,7 +99,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="4" class="px-4 py-6 text-center text-gray-500">No rankings found.</td>
+                                    <td colspan="4" class="px-4 py-6 text-center text-gray-500">Belum ada data</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -111,15 +111,15 @@
         {{-- SECTION 2: UNIT RANKINGS (Wrapped in Card) --}}
         <div class="col-span-1">
             <x-filament::card>
-                <h2 class="text-xl font-bold mb-4 text-gray-800 dark:text-white">Unit Rankings</h2>
+                <h2 class="text-xl font-bold mb-4 text-gray-800 dark:text-white">Ranking Unit</h2>
                 
                 <div class="overflow-hidden rounded-lg border border-gray-200 dark:border-white/10">
                     <table class="w-full text-sm text-left">
                         <thead class="bg-gray-50 dark:bg-white/5">
                             <tr>
-                                <th class="px-4 py-3 font-medium text-gray-950 dark:text-white">Rank</th>
+                                <th class="px-4 py-3 font-medium text-gray-950 dark:text-white">Ranking</th>
                                 <th class="px-4 py-3 font-medium text-gray-950 dark:text-white">Unit</th>
-                                <th class="px-4 py-3 font-medium text-gray-950 dark:text-white text-center">Score</th>
+                                <th class="px-4 py-3 font-medium text-gray-950 dark:text-white text-center">Skor</th>
                                 <th class="px-4 py-3 font-medium text-gray-950 dark:text-white text-right">Status</th>
                             </tr>
                         </thead>
@@ -138,11 +138,11 @@
 
                                             $score = (float) $unit['saw_score'];
                                             if ($score >= 0.8) {
-                                                $statusLabel = 'Excellent'; $statusClass = 'bg-green-100 text-green-700';
+                                                $statusLabel = 'Sangat Baik'; $statusClass = 'bg-green-100 text-green-700';
                                             } elseif ($score >= 0.6) {
-                                                $statusLabel = 'Good'; $statusClass = 'bg-orange-100 text-orange-700';
+                                                $statusLabel = 'Baik'; $statusClass = 'bg-orange-100 text-orange-700';
                                             } else {
-                                                $statusLabel = 'Needs Improvement'; $statusClass = 'bg-red-100 text-red-700';
+                                                $statusLabel = 'Perlu Peningkatan'; $statusClass = 'bg-red-100 text-red-700';
                                             }
                                         @endphp
 
@@ -160,7 +160,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="4" class="px-4 py-6 text-center text-gray-500">No unit rankings found.</td>
+                                    <td colspan="4" class="px-4 py-6 text-center text-gray-500">Belum ada data</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -181,10 +181,10 @@
     @if(auth()->user()->hasRole(['Manajemen Rumah Sakit', 'Super Admin']))
         <div class="mt-12 mb-6 border-t border-gray-200 dark:border-gray-700 pt-8">
             <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">
-                Annual Performance & Trends
+                Performa Tahunan
             </h2>
             <p class="text-gray-500 text-sm">
-                Long-term analysis of unit performance over the selected year.
+                Performa unit pada tahun yang dipilih
             </p>
         </div>
         

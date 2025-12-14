@@ -9,7 +9,7 @@ use App\Models\Unit;
 class MonthlyUnitPerformanceChart extends ApexChartWidget
 {
     protected static string $chartId = 'monthlyUnitPerformance';
-    protected static ?string $heading = 'Monthly Performance Trends';
+    protected static ?string $heading = 'Kinerja Bulanan';
     protected static ?int $sort = 3;
     protected int | string | array $columnSpan = 'full';
 
@@ -31,7 +31,7 @@ class MonthlyUnitPerformanceChart extends ApexChartWidget
         
         $units = Unit::all();
         $series = [];
-        $categories = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        $categories = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
         $months = range(1, 12);
 
         foreach ($units as $unit) {
@@ -61,7 +61,7 @@ class MonthlyUnitPerformanceChart extends ApexChartWidget
                 'labels' => ['style' => ['fontFamily' => 'inherit']],
             ],
             'yaxis' => [
-                'title' => ['text' => 'SAW Score (0-1)'],
+                'title' => ['text' => 'Skor'],
                 'min' => 0, 
                 'max' => 1,
             ],

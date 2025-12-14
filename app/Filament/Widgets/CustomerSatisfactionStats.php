@@ -92,7 +92,7 @@ class CustomerSatisfactionStats extends BaseWidget
                     ->color('primary'),
 
                 // Card 3: Satisfaction
-                Card::make('Unit Satisfaction', $myAvgRating ? number_format($myAvgRating, 1) . ' / 5.0' : '-')
+                Card::make('Tingkat Kepuasan Unit', $myAvgRating ? number_format($myAvgRating, 1) . ' / 5.0' : '-')
                     ->description($myAvgRating ? '' : 'Belum ada data')
                     ->icon('heroicon-s-star')
                     ->color('primary'),

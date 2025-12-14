@@ -33,17 +33,17 @@ class UnitAnnualSummaryTable extends Widget
                 ->avg('saw_score');
 
             // Logic for Status
-            $status = 'No Data';
+            $status = 'Belum ada data';
             $color = 'text-gray-500 bg-gray-100';
             if ($avgScore) {
                 if ($avgScore >= 0.8) {
-                    $status = 'Excellent';
+                    $status = 'Sangat Baik';
                     $color = 'text-green-700 bg-green-100';
                 } elseif ($avgScore >= 0.6) {
-                    $status = 'Good';
+                    $status = 'Baik';
                     $color = 'text-orange-700 bg-orange-100';
                 } else {
-                    $status = 'Needs Improvement';
+                    $status = 'Perlu Peninngkatan';
                     $color = 'text-red-700 bg-red-100';
                 }
             }

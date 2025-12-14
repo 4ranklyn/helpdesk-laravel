@@ -9,7 +9,7 @@ use App\Models\Unit;
 class YearlyPerformanceTrendChart extends ApexChartWidget
 {
     protected static string $chartId = 'yearlyPerformanceTrend';
-    protected static ?string $heading = 'Year-over-Year Performance Comparison';
+    protected static ?string $heading = 'Perbandingan Kinerja Unit Tahun ke Tahun';
     protected static ?int $sort = 3; 
     protected int | string | array $columnSpan = 'full';
 
@@ -70,7 +70,7 @@ class YearlyPerformanceTrendChart extends ApexChartWidget
                 // 'title' => ['text' => 'Year'],
             ],
             'yaxis' => [
-                'title' => ['text' => 'Average SAW Score'],
+                'title' => ['text' => 'Skor Rata-rata'],
                 'min' => 0, 
                 'max' => 1,
             ],

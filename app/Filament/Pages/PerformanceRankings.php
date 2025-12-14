@@ -18,7 +18,7 @@ class PerformanceRankings extends Page implements HasForms
 
     protected static ?string $navigationIcon = 'heroicon-o-chart-bar';
     protected static ?string $navigationLabel = 'Performance Rankings';
-    protected static ?string $title = 'Staff & Unit Rankings';
+    protected static ?string $title = 'Ranking Staff & Unit';
     protected static string $view = 'filament.pages.performance-rankings';
 
     // Properties
@@ -120,7 +120,7 @@ class PerformanceRankings extends Page implements HasForms
         $actions = [
              // Filter Button (Visible to all authorized users)
              Action::make('filter')
-                ->label('Filter Period')
+                ->label('Pilih Periode')
                 ->icon('heroicon-o-filter')
                 ->form([
                     Select::make('year')
@@ -128,9 +128,9 @@ class PerformanceRankings extends Page implements HasForms
                         ->default(now()->year),
                     Select::make('month')
                         ->options([
-                            1 => 'January', 2 => 'February', 3 => 'March', 4 => 'April',
-                            5 => 'May', 6 => 'June', 7 => 'July', 8 => 'August',
-                            9 => 'September', 10 => 'October', 11 => 'November', 12 => 'December'
+                            1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
+                            5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
+                            9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
                         ])
                         ->default(now()->month),
                 ])
@@ -145,7 +145,7 @@ class PerformanceRankings extends Page implements HasForms
         // Admin Unit cannot recalculate the whole hospital's scores.
         if (Auth::user()->hasRole(['Manajemen Rumah Sakit', 'Super Admin'])) {
             $actions[] = Action::make('recalculate')
-                ->label('Recalculate Ranks')
+                ->label('Hitung Ulang Ranking')
                 ->color('danger')
                 ->icon('heroicon-o-refresh')
                 ->requiresConfirmation()
@@ -155,7 +155,7 @@ class PerformanceRankings extends Page implements HasForms
                         '--month' => $this->selectedMonth,
                     ]);
                     $this->loadData();
-                    Notification::make()->title('Rankings Updated')->success()->send();
+                    Notification::make()->title('Ranking Berhasil Diperbarui!')->success()->send();
                 });
         }
 
