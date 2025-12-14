@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use Illuminate\Database\Seeder;
+use App\Models\User;
 
 class UserSeeder extends Seeder
 {
@@ -12,33 +12,60 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        // 1. create a super admin
+        // create user super admin
         $superAdmin = User::factory()->create([
             'name' => 'Super Admin',
             'email' => 'superadmin@example.com',
         ]);
         $superAdmin->syncRoles('Super Admin');
 
-        // 2. create a admin unit
-        $adminUnit = User::factory()->create([
-            'name' => 'Admin Unit',
-            'email' => 'adminunit@example.com',
-            'unit_id' => 1,
-        ]);
-        $adminUnit->syncRoles('Admin Unit');
+        // unit
+        $units = [
+            1 => 'IT',
+            2 => 'Farmasi',
+            3 => 'K3',
+            4 => 'ISPRS',
+            5 => 'CSSD',
+            6 => 'Rumah Tangga',
+            7 => 'Gizi',
+            8 => 'Laundry',
+        ];
 
-        // 3. create a staff unit
-        $staffUnit = User::factory()->create([
-            'name' => 'Staff Unit',
-            'email' => 'staffunit@example.com',
-            'unit_id' => 1,
-        ]);
-        $staffUnit->syncRoles('Staff Unit');
+        // create user admin dan staff untuk tiap unit
+        foreach ($units as $id => $name) {
 
-        // 4. create a user
-        $staffUnit = User::factory()->create([
+            // Admin Unit
+            User::factory()->create([
+                'name' => "Admin $name",
+                'email' => 'admin' . strtolower(str_replace(' ', '', $name)) . '@example.com',
+                'unit_id' => $id,
+            ])->syncRoles('Admin Unit');
+
+            // Staff Unit 1
+            User::factory()->create([
+                'name' => "Staff $name 1",
+                'email' => 'staff_' . strtolower(str_replace(' ', '', $name)) . '1@example.com',
+                'unit_id' => $id,
+            ])->syncRoles('Staff Unit');
+
+            // Staff Unit 2
+            User::factory()->create([
+                'name' => "Staff $name 2",
+                'email' => 'staff_' . strtolower(str_replace(' ', '', $name)) . '2@example.com',
+                'unit_id' => $id,
+            ])->syncRoles('Staff Unit');
+        }
+
+        // create user
+        User::factory()->create([
             'name' => 'User',
             'email' => 'user@example.com',
         ]);
+
+        // create user manajemen rs
+        User::factory()->create([
+            'name' => 'Manajemen Rumah Sakit',
+            'email' => 'manajemen_rs@example.com',
+        ])->syncRoles('Manajemen Rumah Sakit');
     }
 }

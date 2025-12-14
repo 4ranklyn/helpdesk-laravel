@@ -72,14 +72,11 @@ class TicketResource extends Resource
 
                     Forms\Components\Select::make('problem_category_id')
                         ->label(__('Problem Category'))
-                        ->options(function (callable $get, callable $set) use ($isRestrictedUser) {
-                            if ($isRestrictedUser) return [];
-                            
-                            $unit = Unit::find($get('unit_id'));
-                            if ($unit) {
-                                return $unit->problemCategories->pluck('name', 'id');
+                        ->options(function (callable $get) {
+                            $unitId = $get('unit_id');
+                            if ($unitId) {
+                                return ProblemCategory::where('unit_id', $unitId)->pluck('name', 'id');
                             }
-
                             return ProblemCategory::all()->pluck('name', 'id');
                         })
                         ->searchable()
@@ -227,6 +224,9 @@ class TicketResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\ForceDeleteAction::make(),
+                Tables\Actions\RestoreAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),

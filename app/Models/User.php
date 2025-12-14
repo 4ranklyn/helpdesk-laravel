@@ -108,11 +108,11 @@ class User extends Authenticatable implements FilamentUser
     }
 
     /**
-     * Get all of the ticekt responsibility for the User.
+     * Get all of the ticket responsibility for the User.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function ticektResponsibility()
+    public function ticketResponsibility()
     {
         return $this->hasMany(Ticket::class, 'responsible_id');
     }
@@ -148,4 +148,26 @@ class User extends Authenticatable implements FilamentUser
     {
         return $this->hasMany(SocialiteUser::class);
     }
+
+    public function responsibleTickets()
+    {
+        return $this->hasMany(Ticket::class, 'responsible_id');
+    }
+
+    /**
+     * Relasi untuk mengambil semua rating yang diterima user ini
+     * (User -> punya banyak Ticket -> punya satu Rating)
+     */
+    public function ratingsReceived()
+    {
+        return $this->hasManyThrough(
+            Rating::class,
+            Ticket::class,
+            'responsible_id', // Foreign key di tabel tickets
+            'ticket_id',      // Foreign key di tabel ratings
+            'id',             // Local key di tabel users
+            'id'              // Local key di tabel tickets
+        );
+    }
 }
+

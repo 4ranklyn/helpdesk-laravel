@@ -55,8 +55,19 @@ class TicketPolicy
     /**
      * Determine whether the user can delete the model.
      */
+    /**
+     * Determine whether the user can delete the model.
+     */
     public function delete(User $user, Ticket $ticket): bool
     {
+        if ($user->hasRole('Super Admin')) {
+            return true;
+        }
+
+        if ($user->hasRole('Admin Unit')) {
+            return $ticket->unit_id == $user->unit_id;
+        }
+
         if ($ticket->ticket_statuses_id != TicketStatus::OPEN) {
             return false;
         }
@@ -69,6 +80,10 @@ class TicketPolicy
      */
     public function restore(User $user, Ticket $ticket): bool
     {
+        if ($user->hasRole('Super Admin')) {
+            return true;
+        }
+        
         return $user->id == $ticket->owner_id;
     }
 
@@ -77,6 +92,6 @@ class TicketPolicy
      */
     public function forceDelete(User $user, Ticket $ticket): bool
     {
-        return $user->id == $ticket->owner_id;
+        return $user->hasRole('Super Admin');
     }
 }

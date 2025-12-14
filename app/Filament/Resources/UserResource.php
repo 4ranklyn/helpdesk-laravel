@@ -32,7 +32,8 @@ class UserResource extends Resource
                 Forms\Components\Select::make('unit_id')
                     ->options(Unit::all()
                         ->pluck('name', 'id'))
-                    ->searchable(),
+                    ->searchable()
+                    ->extraAttributes(['data-testid' => 'unit-select']),
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
@@ -43,6 +44,7 @@ class UserResource extends Resource
                 Forms\Components\DateTimePicker::make('email_verified_at'),
                 Forms\Components\TextInput::make('password')
                     ->password()
+                    ->extraAttributes(['data-testid' => 'password-input'])
                     ->required(fn ($record) => is_null($record))
                     ->maxLength(255)
                     ->visible(fn ($record) => is_null($record) || auth()->id() === $record->id)
@@ -53,8 +55,11 @@ class UserResource extends Resource
                 Forms\Components\TextInput::make('phone')
                     ->tel()
                     ->maxLength(255),
-                Forms\Components\Toggle::make('is_active')
-                    ->required(),
+                Forms\Components\Toggle::make('is_active'),
+                Forms\Components\Select::make('roles')
+                    ->multiple()
+                    ->relationship('roles', 'name')
+                    ->extraAttributes(['data-testid' => 'roles-select']),
             ])
         ;
     }
