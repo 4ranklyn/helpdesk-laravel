@@ -6,7 +6,7 @@ use Filament\Pages\Dashboard as BasePage;
 use App\Filament\Widgets\TicketStatusPieChart;
 use App\Filament\Widgets\CustomerSatisfactionStats;
 use App\Filament\Widgets\TicketChart;
-use App\Filament\Widgets\TopPerformingStaff;
+use App\Filament\Widgets\PerformancePageLink;
 
 class Dashboard extends BasePage
 {
@@ -24,24 +24,26 @@ class Dashboard extends BasePage
         $widgets[] = \Filament\Widgets\AccountWidget::class;
 
         // --- URUTAN 2: OVERVIEW (Gambar SS Anda) ---
-        $widgets[] = \Awcodes\Overlook\Overlook::class;
+        if (!$user->hasRole('Manajemen Rumah Sakit')) {
+            $widgets[] = \Awcodes\Overlook\Overlook::class;
+        }
 
         // --- URUTAN 3: DISTRIBUSI STATUS (Pie Chart) ---
         if ($user->hasRole('Admin Unit') || $user->hasRole('Super Admin')) {
             $widgets[] = TicketStatusPieChart::class;
         }
 
-        // --- URUTAN 4 : Leaderboard Staff (Khusus Admin)
-        if ($user->hasRole('Admin Unit') || $user->hasRole('Super Admin')) {
-            if (class_exists(TopPerformingStaff::class)) {
-                $widgets[] = TopPerformingStaff::class;
-            }
+        $widgets[] = CustomerSatisfactionStats::class; // Kartu Angka CSAT
+
+        // 6. [NEW] LINK BUTTON (Visible to everyone authorized)
+        if ($user->hasRole(['Manajemen Rumah Sakit', 'Admin Unit', 'Super Admin'])) {
+            $widgets[] = PerformancePageLink::class;
         }
 
         // --- URUTAN 5: EXECUTIVE SUMMARY (Rating & Leaderboard) ---
-        $widgets[] = CustomerSatisfactionStats::class; // Kartu Angka CSAT
-        $widgets[] = TicketChart::class;               // Grafik Tren
-
+        if ($user->hasRole(['Manajemen Rumah Sakit', 'Admin Unit', 'Super Admin'])) {
+            $widgets[] = TicketChart::class; // Grafik Tren
+        }
         return $widgets;
     }
 }

@@ -12,9 +12,21 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
-        // recompute daily at 02:00 for current month ranks (updates month-in-progress)
-        $schedule->command('rankings:recompute')->dailyAt('02:00');
+        // TASK 1: Calculate THIS Month
+        // Run: Every night at 01:00 AM
+        // Purpose: So the dashboard is always fresh for the next morning.
+        $schedule->command('rankings:recompute', [
+            '--year' => now()->year,
+            '--month' => now()->month,
+        ])->dailyAt('01:00');
+
+        // TASK 2: Finalize LAST Month
+        // Run: ONLY on the 1st day of the month at 01:30 AM
+        // Purpose: To "lock in" the final scores for the month that just finished.
+        $schedule->command('rankings:recompute', [
+            '--year' => now()->subMonth()->year,
+            '--month' => now()->subMonth()->month,
+        ])->monthlyOn(1, '01:30');
     }
 
     /**

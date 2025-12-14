@@ -161,4 +161,22 @@ class PerformanceRankings extends Page implements HasForms
 
         return $actions;
     }
+    // This adds widgets to the bottom of the page
+    protected function getFooterWidgets(): array
+    {
+        $user = Auth::user();
+
+        // Only show reports to Management or Super Admin
+        if ($user->hasRole(['Manajemen Rumah Sakit', 'Super Admin'])) {
+            return [
+                // The Annual Summary Table
+                \App\Filament\Widgets\UnitAnnualSummaryTable::class,
+                
+                // Yearly Trend (Year-over-Year)
+                \App\Filament\Widgets\YearlyPerformanceTrendChart::class,
+            ];
+        }
+
+        return [];
+    }
 }
