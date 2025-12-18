@@ -17,10 +17,10 @@ use App\Models\User;
  * Class Ticket.
  *
  * @property int $id
- * @property int $priority_id
+ * @property int|null $priority_id
  * @property int $unit_id
  * @property int $owner_id
- * @property int $problem_category_id
+ * @property int|null $problem_category_id
  * @property string $title
  * @property string $description
  * @property int $ticket_statuses_id
@@ -66,6 +66,11 @@ class Ticket extends Model
         'solved_at',
     ];
 
+    protected $attributes = [
+        'priority_id' => null,
+        'problem_category_id' => null,
+    ];
+
     /**
      * Get the priority that owns the Ticket.
      *
@@ -73,7 +78,7 @@ class Ticket extends Model
      */
     public function priority()
     {
-        return $this->belongsTo(Priority::class);
+        return $this->belongsTo(Priority::class)->withDefault();
     }
 
     /**
@@ -111,9 +116,9 @@ class Ticket extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function problemCategory()
+    public function problem_category()
     {
-        return $this->belongsTo(ProblemCategory::class);
+        return $this->belongsTo(ProblemCategory::class, 'problem_category_id')->withDefault();
     }
 
     /**

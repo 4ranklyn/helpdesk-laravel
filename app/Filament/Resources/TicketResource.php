@@ -80,8 +80,11 @@ class TicketResource extends Resource
                             return ProblemCategory::all()->pluck('name', 'id');
                         })
                         ->searchable()
-                        ->required()
-                        ->disabled($isRestrictedUser),
+                        ->nullable()
+                        ->hiddenOn('create')
+                        ->disabled($isStaffUnit)  // Only disable for Staff Unit, not Admin Unit
+                        ->hint('Set by unit admin')
+                        ->visible(fn () => auth()->user()->hasAnyRole(['Super Admin', 'Admin Unit', 'Staff Unit'])),
 
                     Forms\Components\TextInput::make('title')
                         ->label(__('Title'))
@@ -124,8 +127,10 @@ class TicketResource extends Resource
                         ->options(Priority::all()
                             ->pluck('name', 'id'))
                         ->searchable()
-                        ->required()
-                        ->disabled($isStaffUnit && $isRestrictedUser), // Only Staff Unit can't edit priority when editing
+                        ->nullable()
+                        ->hiddenOn('create')
+                        ->disabled($isStaffUnit && $isRestrictedUser) // Only Staff Unit can't edit priority when editing
+                        ->hint('Set by unit admin'),
 
                     Forms\Components\Select::make('ticket_statuses_id')
                         ->label(__('Status'))
@@ -133,11 +138,13 @@ class TicketResource extends Resource
                             ->pluck('name', 'id'))
                         ->searchable()
                         ->required()
+                        ->default(TicketStatus::OPEN)
+                        ->dehydrateStateUsing(fn ($state) => $state ?? TicketStatus::OPEN)
                         ->hiddenOn('create')
                         ->hidden(
                             fn () => !auth()
                                 ->user()
-                                ->hasAnyRole(['Super Admin', 'Admin Unit', 'Staff Unit']),
+                                ->hasAnyRole(['Super Admin', 'Admin Unit', 'Staff Unit'])
                         ),
 
                     Forms\Components\Select::make('responsible_id')
