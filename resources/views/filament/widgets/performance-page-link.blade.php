@@ -8,7 +8,7 @@
             {{-- [FIX] Use heroicon-o- (outline) or heroicon-s- (solid) for v2 --}}
             <x-filament::button
                 tag="a"
-                href="/admin/staff-unit-rankings"
+                href="/admin/ranking-staff-unit"
                 icon="heroicon-o-arrow-right" 
                 icon-position="after"
                 size="md"
