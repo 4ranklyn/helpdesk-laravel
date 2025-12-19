@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Http;
 use Laravel\Fortify\Contracts\LogoutResponse as LogoutResponseContract;
 use App\Http\Responses\LogoutResponse;
 use App\Filament\Resources\TicketResource\Pages\MyTickets;
@@ -40,5 +41,12 @@ class AppServiceProvider extends ServiceProvider
                 ->name('filament.admin.pages.view-staff')
                 ->middleware('web');
         });
+
+        // Disable SSL verification for local development (Telegram API)
+        if (app()->environment('local')) {
+            Http::globalOptions([
+                'verify' => false,
+            ]);
+        }
     }
 }

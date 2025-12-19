@@ -18,7 +18,9 @@ class TelegramService
 
     public function sendMessage($chatId, $text)
     {
-        return Http::post("{$this->baseUrl}/sendMessage", [
+        return Http::withOptions([
+            'verify' => false,
+        ])->post("{$this->baseUrl}/sendMessage", [
             'chat_id' => $chatId,
             'text' => $text,
             'parse_mode' => 'Markdown', // Tambahkan ini agar format bold (*...*) berfungsi
